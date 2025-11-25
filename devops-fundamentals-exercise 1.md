@@ -203,6 +203,8 @@ ENV FLASK_APP=main.py
 # Run the application
 CMD ["python", "main.py"]
 
+#Save the file 
+CTRL + S
 ```
 
 2. **Create `.dockerignore`**:
@@ -218,6 +220,7 @@ logs/*.log
 .gitignore
 
 ```
+This tells Docker to ignore unnecessary files when building the image, which makes builds faster and cleaner.
 
 1. **Build the Docker image**:
 
@@ -233,15 +236,6 @@ docker build -t devops-lab-api:v1 .
 
 docker run -d -p 5000:5000 --name devops-api devops-lab-api:v1
 
-```
-
-   **Note:** If you get a "port already in use" error, stop the local Flask server or remove any existing container:
-   ```bash
-   # Remove existing container if needed
-   docker rm -f devops-api
-   # Then run the container again
-   docker run -d -p 5000:5000 --name devops-api devops-lab-api:v1
-   ```
 
 1. **Test the containerized API**:
 
@@ -249,13 +243,27 @@ docker run -d -p 5000:5000 --name devops-api devops-lab-api:v1
 
 curl http://localhost:5000/health
 
-```
+``````
+
+   **Note:** If you get a "port already in use" error, "curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server",
+   This means the container is running, but the Flask app inside is not listening on the correct interface or not starting properly.
+
+    stop the local Flask server or remove any existing container:
+   ```bash
+   # Remove existing container if needed
+   docker rm -f devops-api
+   # Then run the container again
+   docker run -d -p 5000:5000 --name devops-api devops-lab-api:v1
+   ```
+
 
 1. **View container logs**:
 
 ```bash
 
 docker logs devops-api
+# ModuleNotFoundError: No module named 'flask'
+# Readded flask==3.0.0 in app/requirements.txt
 
 ```
 
@@ -344,8 +352,10 @@ chmod +x scripts/deploy.sh
 
 ### Tasks:
 
-1. **Create `.github/workflows/ci.yml`**:
-   
+1. **Create `.github/workflows/ci.yml`**
+
+# mkdir -p .github/workflows && touch .github/workflows/ci.yml
+
 ```yaml
 
 name: CI/CD Pipeline
